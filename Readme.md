@@ -54,57 +54,162 @@ NAGAD_CALLBACK_URL=""
 ```
 
 ## Usage
-
-### 1. Create Payment
-
+### 1. create a controller
 ```
-use Karim007\LaravelNagad\Payment\Payment;
-
-return (new Payment)->create($amount, $invoiceNumber)  // 1st parameter is amount and 2nd is unique invoice number 
+php artisan make:controller NagadController
 ```
 
-or
+### 2. add this routes
+```
+Route::get('nagad/pay',[App\Http\Controllers\NagadController::class,'pay'])->name('nagad.pay');
+Route::get('nagad/callback', [App\Http\Controllers\NagadController::class,'callback']);
+Route::get('nagad/refund/{paymentRefId}', [App\Http\Controllers\NagadController::class,'refund']);
 
 ```
-use Karim007\LaravelNagad\Facade\NagadPayment;
 
-return NagadPayment::create($amount, $invoiceNumber);
-```
+### 3. Create Payment
 
-### 2. Verify Payment
-
-```
-use Karim007\LaravelNagad\Payment\Payment;
-
-(new Payment)->verify($paymentRefId) // $paymentRefId which you will find callback URL request parameter
-```
-
-or
-
+#must be included in your controller
 ```
 use Karim007\LaravelNagad\Facade\NagadPayment;
-
-NagadPayment::verify($paymentRefId);
-```
-
-### 3. Refund Payment
-
-```
-use Karim007\LaravelNagad\Payment\Refund;
-
-(new Refund)->refund($paymentRefId,$refundAmount);
-```
-
-or
-
-```
 use Karim007\LaravelNagad\Facade\NagadRefund;
-
-NagadRefund::refund($paymentRefId,$refundAmount);
 ```
 
+
+```
+public function pay()
+{
+    $amount = 1000;
+    $trx_id = uniqid();
+    //if you have multipule/dynamic callback url then uncomment bellow line and use dynamic callbackurl
+    //otherwise don't do anything
+    //config(['nagad.callback_url' => env('NAGAD_CALLBACK_URL')]);
+    
+    $response = NagadPayment::create($amount, $trx_id); // 1st parameter is amount and 2nd is unique invoice number
+    if (isset($response) && $response->status == "Success"){
+        return redirect()->away($response->callBackUrl);
+    }
+    return redirect()->back()->with("error-alert", "Invalid request try again after few time later");
+}
+```
+or
+
+```
+public function pay()
+{
+    $amount = 1000;
+    $trx_id = uniqid();
+    $response = (new Payment)->create($amount, $trx_id); // 1st parameter is amount and 2nd is unique invoice number
+    if (isset($response) && $response->status == "Success"){
+        return redirect()->away($response->callBackUrl);
+    }
+    return redirect()->back()->with("error-alert", "Invalid request try again after few time later");
+}
+```
+
+
+### 4. Verify Payment
+
+```
+public function callback(Request $request)
+{
+    if (!$request->status && !$request->order_id) {
+        return response()->json([
+            "error" => "Not found any status"
+        ], 500);
+    }
+
+    if (config("nagad.response_type") == "json") {
+        return response()->json($request->all());
+    }
+
+    $verify = NagadPayment::verify($request->payment_ref_id); // $paymentRefId which you will find callback URL request parameter
+
+    if (isset($verify->status) && $verify->status == "Success") {
+        return $this->success($verify->orderId);
+    } else {
+        return $this->fail($verify->orderId);
+    }
+
+}
+```
+
+or
+
+```
+public function callback(Request $request)
+{
+    if (!$request->status && !$request->order_id) {
+        return response()->json([
+            "error" => "Not found any status"
+        ], 500);
+    }
+
+    if (config("nagad.response_type") == "json") {
+        return response()->json($request->all());
+    }
+
+    $verify = (new Payment)->verify($request->payment_ref_id); // $paymentRefId which you will find callback URL request parameter
+
+    if (isset($verify->status) && $verify->status == "Success") {
+        return $this->success($verify->orderId);
+    } else {
+        return $this->fail($verify->orderId);
+    }
+
+}
+```
+
+### 5. Refund Payment
+
+```
+
+public function refund($paymentRefId)
+{
+    $refundAmount=1000;
+    $verify = NagadRefund::refund($paymentRefId,$refundAmount);
+    if (isset($verify->status) && $verify->status == "Success") {
+        return $this->success($verify->orderId);
+    } else {
+        return $this->fail($verify->orderId);
+    }
+}
+
+```
+
+or
+
+```
+public function refund($paymentRefId)
+{
+    $refundAmount=1000;
+    $verify = (new Refund)->refund($paymentRefId,$refundAmount);;
+    if (isset($verify->status) && $verify->status == "Success") {
+        return $this->success($verify->orderId);
+    } else {
+        return $this->fail($verify->orderId);
+    }
+}
+```
 <span style="color: #96d0ff">Note: For the refund method, you have to pass two more parameters one is <b>reference no</b> and another
 <b>reference message</b></span>
+
+### 5. success function
+```
+public function success($transId)
+{
+    return view("nagad::success", compact('transId'));
+}
+```
+
+### 6. fail function
+```
+public function fail($transId)
+{
+    return view("nagad::failed", compact('transId'));
+}
+```
+
 
 Contributions to the Nagad Payment Gateway package are welcome. Please note the following guidelines before submitting your pull
 request.
