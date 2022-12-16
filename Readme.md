@@ -45,7 +45,7 @@ After publish config file setup your credential. you can see this in your config
 ### Set .env configuration
 
 ```
-NAGAD_SANDBOX=true // for production use false
+NAGAD_SANDBOX=true #for production use false
 NAGAD_MERCHANT_ID=""
 NAGAD_MERCHANT_NUMBER=""
 NAGAD_PUBLIC_KEY=""
@@ -221,4 +221,4 @@ request.
 
 This repository is licensed under the [MIT License](http://opensource.org/licenses/MIT).
 
-Copyright 2022 [karim007](https://github.com/karim-007). We are not affiliated with Nagad and don't give any guarantee. 
+Copyright 2022 [md abdul karim](https://github.com/karim-007). We are not affiliated with Nagad and don't give any guarantee. 
