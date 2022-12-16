@@ -7,10 +7,6 @@
 
 This is a php/laravel wrapper package for [Nagad MFS](https://nagad.com.bd/)
 
-1. [Create Payment/Take to Payment Page](https://github.com/karim-007/nagad#1-create-payment)
-2. [Verify Payment/Query Payment/Payment Details](https://github.com/karim-007/nagad#2-verify-payment)
-3. [Refund Payment](https://github.com/karim-007/nagad#3-refund-payment)
-
 ## Requirements
 
 - PHP >=7.4
