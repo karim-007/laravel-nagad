@@ -5,7 +5,7 @@
 
 
 ## Examples
-![nagad](examples/nagad.png)
+![nagad](examples/nagad.png){ width=50% height=30% }
 ![nagad](examples/nagad2.png)
 ![nagad](examples/nagad3.png)
 ![nagad](examples/nagad4.png)
