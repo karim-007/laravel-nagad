@@ -3,6 +3,13 @@
 [![Downloads](https://img.shields.io/packagist/dt/karim007/laravel-nagad)](https://packagist.org/packages/karim007/laravel-nagad)
 [![Starts](https://img.shields.io/packagist/stars/karim007/laravel-nagad)](https://packagist.org/packages/karim007/laravel-nagad)
 
+
+## Examples
+![nagad](examples/nagad.png)
+![nagad](examples/nagad2.png)
+![nagad](examples/nagad3.png)
+![nagad](examples/nagad4.png)
+![nagad](examples/nagad5.png)
 ## Features
 
 This is a php/laravel wrapper package for [Nagad MFS](https://nagad.com.bd/)
