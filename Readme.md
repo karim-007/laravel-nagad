@@ -5,12 +5,12 @@
 
 
 ## Examples
-![nagad](examples/nagad.png){ width=10% }
-![nagad](examples/nagad.png)
-![nagad](examples/nagad2.png)
-![nagad](examples/nagad3.png)
-![nagad](examples/nagad4.png)
-![nagad](examples/nagad5.png)
+<img src="examples/nagad.png" alt="nagad" width="150" height="150">
+<img src="examples/nagad2.png" alt="nagad" width="150" height="150">
+<img src="examples/nagad3.png" alt="nagad" width="150" height="150">
+<img src="examples/nagad4.png" alt="nagad" width="150" height="150">
+<img src="examples/nagad5.png" alt="nagad" width="150" height="150">
+
 ## Features
 
 This is a php/laravel wrapper package for [Nagad MFS](https://nagad.com.bd/)
