@@ -3,14 +3,6 @@
 [![Downloads](https://img.shields.io/packagist/dt/karim007/laravel-nagad)](https://packagist.org/packages/karim007/laravel-nagad)
 [![Starts](https://img.shields.io/packagist/stars/karim007/laravel-nagad)](https://packagist.org/packages/karim007/laravel-nagad)
 
-
-## Examples
-![]()<img src="examples/nagad.png" alt="nagad" width="150" height="150">
-![]()<img src="examples/nagad2.png" alt="nagad" width="150" height="150">
-![]()<img src="examples/nagad3.png" alt="nagad" width="150" height="150">
-![]()<img src="examples/nagad4.png" alt="nagad" width="150" height="150">
-![]()<img src="examples/nagad5.png" alt="nagad" width="150" height="150">
-
 ## Features
 
 This is a php/laravel wrapper package for [Nagad MFS](https://nagad.com.bd/)
@@ -26,6 +18,20 @@ This is a php/laravel wrapper package for [Nagad MFS](https://nagad.com.bd/)
 ```bash
 composer require karim007/laravel-nagad
 ```
+
+
+## Examples
+![]()<img src="examples/nagad.png" alt="nagad" width="150" height="150">
+![]()<img src="examples/nagad2.png" alt="nagad" width="150" height="150">
+![]()<img src="examples/nagad3.png" alt="nagad" width="150" height="150">
+![]()<img src="examples/nagad4.png" alt="nagad" width="150" height="150">
+![]()<img src="examples/nagad5.png" alt="nagad" width="150" height="150">
+
+
+For  video tutorial click the image bellow or https://youtu.be/xue4EP5et58
+
+[![laravel nagad](https://img.youtube.com/vi/xue4EP5et58/hqdefault.jpg)](https://youtu.be/xue4EP5et58)
+
 
 ### vendor publish (config)
 
