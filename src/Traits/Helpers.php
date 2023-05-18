@@ -37,10 +37,10 @@ trait Helpers
      *
      * @return array
      */
-    public function getSensitiveData(string $invoice)
+    public function getSensitiveData(string $invoice, $account=null)
     {
         return [
-            'merchantId' => config("nagad.merchant_id"),
+            'merchantId' => config("nagad.merchant_id$account"),
             'datetime'   => Carbon::now(config("nagad.timezone"))->format("YmdHis"),
             'orderId'    => $invoice,
             'challenge'  => $this->getRandomString()
@@ -53,9 +53,9 @@ trait Helpers
      * @return string
      * @throws InvalidPublicKey
      */
-    public function encryptWithPublicKey(string $data)
+    public function encryptWithPublicKey(string $data, $account=null)
     {
-        $publicKey   = "-----BEGIN PUBLIC KEY-----\n" . config('nagad.public_key') . "\n-----END PUBLIC KEY-----";
+        $publicKey   = "-----BEGIN PUBLIC KEY-----\n" . config("nagad.public_key$account") . "\n-----END PUBLIC KEY-----";
         $keyResource = openssl_get_publickey($publicKey);
         $status      = openssl_public_encrypt($data, $cryptoText, $keyResource);
         if ($status) {
@@ -70,9 +70,9 @@ trait Helpers
      *
      * @return mixed
      */
-    public static function decryptDataPrivateKey(string $data)
+    public static function decryptDataPrivateKey(string $data, $account=null)
     {
-        $private_key = "-----BEGIN RSA PRIVATE KEY-----\n" . config('nagad.private_key') . "\n-----END RSA PRIVATE KEY-----";
+        $private_key = "-----BEGIN RSA PRIVATE KEY-----\n" . config("nagad.private_key$account") . "\n-----END RSA PRIVATE KEY-----";
         openssl_private_decrypt(base64_decode($data), $plain_text, $private_key);
         return $plain_text;
     }
@@ -83,9 +83,9 @@ trait Helpers
      * @return string
      * @throws InvalidPrivateKey
      */
-    public function signatureGenerate(string $data)
+    public function signatureGenerate(string $data, $account=null)
     {
-        $private_key = "-----BEGIN RSA PRIVATE KEY-----\n" . config("nagad.private_key") . "\n-----END RSA PRIVATE KEY-----";
+        $private_key = "-----BEGIN RSA PRIVATE KEY-----\n" . config("nagad.private_key$account") . "\n-----END RSA PRIVATE KEY-----";
         $status      = openssl_sign($data, $signature, $private_key, OPENSSL_ALGO_SHA256);
         if ($status) {
             return base64_encode($signature);

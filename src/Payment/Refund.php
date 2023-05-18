@@ -23,8 +23,10 @@ class Refund extends BaseApi
      * @throws InvalidPrivateKey
      * @throws InvalidPublicKey
      */
-    public function refund($paymentRefId, $refundAmount, $referenceNo = "", $message = "Requested for refund")
+    public function refund($paymentRefId, $refundAmount, $referenceNo = "", $message = "Requested for refund",$account=1)
     {
+        if ($account == 1) $account=null;
+        else $account="_$account";
         $paymentDetails = (new Payment())->verify($paymentRefId);
         //dd($paymentDetails);
         if (isset($paymentDetails->reason)) {
@@ -36,7 +38,7 @@ class Refund extends BaseApi
         }
 
         $sensitiveOrderData = [
-            'merchantId'          => config("nagad.merchant_id"),
+            'merchantId'          => config("nagad.merchant_id$account"),
             "originalRequestDate" => date("Ymd"),
             'originalAmount'      => $paymentDetails->amount,
             'cancelAmount'        => $refundAmount,
@@ -46,8 +48,8 @@ class Refund extends BaseApi
 
         $response = Http::withHeaders($this->headers())
             ->post($this->baseUrl . "purchase/cancel?paymentRefId={$paymentDetails->paymentRefId}&orderId={$paymentDetails->orderId}", [
-                "sensitiveDataCancelRequest" => $this->encryptWithPublicKey(json_encode($sensitiveOrderData)),
-                "signature"                  => $this->signatureGenerate(json_encode($sensitiveOrderData))
+                "sensitiveDataCancelRequest" => $this->encryptWithPublicKey(json_encode($sensitiveOrderData),$account),
+                "signature"                  => $this->signatureGenerate(json_encode($sensitiveOrderData),$account)
             ]);
 
         $responseData = json_decode($response->body());
@@ -56,6 +58,6 @@ class Refund extends BaseApi
             throw new NagadException($responseData->message);
         }
 
-        return json_decode($this->decryptDataPrivateKey($responseData->sensitiveData));
+        return json_decode($this->decryptDataPrivateKey($responseData->sensitiveData,$account));
     }
 }

@@ -5,7 +5,7 @@ namespace Karim007\LaravelNagad\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static create($amount, $invoice)
+ * @method static create($amount, $invoice, $account=1)
  * @method static verify($paymentRefId)
  */
 class NagadPayment extends Facade

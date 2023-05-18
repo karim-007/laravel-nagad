@@ -5,7 +5,7 @@ namespace Karim007\LaravelNagad\Facade;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static refund($paymentRefId, $refundAmount)
+ * @method static refund($paymentRefId, $refundAmount, $referenceNo = "", $message = "Requested for refund", $account=1)
  */
 class NagadRefund extends Facade
 {

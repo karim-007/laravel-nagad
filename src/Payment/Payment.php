@@ -3,14 +3,10 @@
 namespace Karim007\LaravelNagad\Payment;
 
 use Carbon\Carbon;
-use Karim007\LaravelNagad\Traits\Helpers;
-use Illuminate\Routing\Redirector;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Http\RedirectResponse;
 use Karim007\LaravelNagad\Exception\NagadException;
 use Karim007\LaravelNagad\Exception\InvalidPublicKey;
 use Karim007\LaravelNagad\Exception\InvalidPrivateKey;
-use Illuminate\Contracts\Foundation\Application;
 
 class Payment extends BaseApi
 {
@@ -24,21 +20,19 @@ class Payment extends BaseApi
      * @throws InvalidPrivateKey
      * @throws InvalidPublicKey
      */
-    private function initPayment($invoice)
+    private function initPayment($invoice, $account=null)
     {
-        $baseUrl       = $this->baseUrl . "check-out/initialize/" . config("nagad.merchant_id") . "/{$invoice}";
-        $sensitiveData = $this->getSensitiveData($invoice);
+        $baseUrl       = $this->baseUrl . "check-out/initialize/" . config("nagad.merchant_id$account") . "/{$invoice}";
+        $sensitiveData = $this->getSensitiveData($invoice, $account);
         $body          = [
-            "accountNumber" => config("nagad.merchant_number"),
+            "accountNumber" => config("nagad.merchant_number$account"),
             "dateTime"      => Carbon::now()->timezone(config("timezone"))->format('YmdHis'),
-            "sensitiveData" => $this->encryptWithPublicKey(json_encode($sensitiveData)),
-            'signature'     => $this->signatureGenerate(json_encode($sensitiveData)),
+            "sensitiveData" => $this->encryptWithPublicKey(json_encode($sensitiveData),$account),
+            'signature'     => $this->signatureGenerate(json_encode($sensitiveData),$account),
         ];
 
         $response = Http::withHeaders($this->headers())->post($baseUrl, $body);
-        //dd($response);
         $response = json_decode($response->body());
-        //dd($response);
         if (isset($response->reason)) {
             throw new NagadException($response->message);
         }
@@ -58,15 +52,17 @@ class Payment extends BaseApi
      * @throws InvalidPublicKey
      * @throws NagadException
      */
-    public function create($amount, $invoice)
+    public function create($amount, $invoice, $account=1)
     {
-        $initialize = $this->initPayment($invoice);
+        if ($account == 1) $account=null;
+        else $account="_$account";
+        $initialize = $this->initPayment($invoice, $account);
 
         if ($initialize->sensitiveData && $initialize->signature) {
-            $decryptData        = json_decode($this->decryptDataPrivateKey($initialize->sensitiveData));
+            $decryptData        = json_decode($this->decryptDataPrivateKey($initialize->sensitiveData,$account));
             $url                = $this->baseUrl . "/check-out/complete/" . $decryptData->paymentReferenceId;
             $sensitiveOrderData = [
-                'merchantId'   => config("nagad.merchant_id"),
+                'merchantId'   => config("nagad.merchant_id$account"),
                 'orderId'      => $invoice,
                 'currencyCode' => '050',
                 'amount'       => $amount,
@@ -75,9 +71,9 @@ class Payment extends BaseApi
 
             $response = Http::withHeaders($this->headers())
                 ->post($url, [
-                    'sensitiveData'       => $this->encryptWithPublicKey(json_encode($sensitiveOrderData)),
-                    'signature'           => $this->signatureGenerate(json_encode($sensitiveOrderData)),
-                    'merchantCallbackURL' => config("nagad.callback_url"),
+                    'sensitiveData'       => $this->encryptWithPublicKey(json_encode($sensitiveOrderData),$account),
+                    'signature'           => $this->signatureGenerate(json_encode($sensitiveOrderData),$account),
+                    'merchantCallbackURL' => config("nagad.callback_url$account"),
                 ]);
             $response = json_decode($response->body());
             if (isset($response->reason)) {
@@ -88,9 +84,11 @@ class Payment extends BaseApi
         }
     }
 
-    public function executePayment($amount, $invoice)
+    public function executePayment($amount, $invoice, $account=1)
     {
-        $response = $this->create($amount, $invoice);
+        if ($account == 1) $account=null;
+        else $account="_$account";
+        $response = $this->create($amount, $invoice, $account);
         if ($response->status == "Success") {
             return redirect($response->callBackUrl);
         }
