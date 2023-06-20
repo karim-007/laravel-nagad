@@ -124,23 +124,6 @@ public function pay()
     return redirect()->back()->with("error-alert", "Invalid request try again after few time later");
 }
 ```
-or
-
-```
-public function pay()
-{
-    $amount = 1000;
-    $trx_id = uniqid();
-    $response = (new Payment)->create($amount, $trx_id); // 1st parameter is amount and 2nd is unique invoice number
-
-    //$response = (new Payment)->create($amount, $trx_id,1); // additional last parameter for manage difference account parameter likes 1,2,3,4
-
-    if (isset($response) && $response->status == "Success"){
-        return redirect()->away($response->callBackUrl);
-    }
-    return redirect()->back()->with("error-alert", "Invalid request try again after few time later");
-}
-```
 
 
 ### 4. Verify Payment
@@ -169,32 +152,6 @@ public function callback(Request $request)
 }
 ```
 
-or
-
-```
-public function callback(Request $request)
-{
-    if (!$request->status && !$request->order_id) {
-        return response()->json([
-            "error" => "Not found any status"
-        ], 500);
-    }
-
-    if (config("nagad.response_type") == "json") {
-        return response()->json($request->all());
-    }
-
-    $verify = (new Payment)->verify($request->payment_ref_id); // $paymentRefId which you will find callback URL request parameter
-
-    if (isset($verify->status) && $verify->status == "Success") {
-        return $this->success($verify->orderId);
-    } else {
-        return $this->fail($verify->orderId);
-    }
-
-}
-```
-
 ### 5. Refund Payment
 
 ```
@@ -212,23 +169,6 @@ public function refund($paymentRefId)
     }
 }
 
-```
-
-or
-
-```
-public function refund($paymentRefId)
-{
-    $refundAmount=1000;
-    $verify = (new Refund)->refund($paymentRefId,$refundAmount);
-    //$verify = (new Refund)->refund($paymentRefId,$refundAmount,'','sss',1); last parameter for manage account
-
-    if (isset($verify->status) && $verify->status == "Success") {
-        return $this->success($verify->orderId);
-    } else {
-        return $this->fail($verify->orderId);
-    }
-}
 ```
 <span style="color: #96d0ff">Note: For the refund method, you have to pass two more parameters one is <b>reference no</b> and another
 <b>reference message</b></span>
