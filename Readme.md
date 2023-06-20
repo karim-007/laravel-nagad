@@ -249,6 +249,26 @@ public function fail($transId)
 }
 ```
 
+###Note
+- >In live mode integration Note
+- 1. login nagad panel
+- 2. got to Mercent management->Marcent integrartion details
+- 3. On the top of this page you will see Marcent ID use it as your env "NAGAD_MERCHANT_ID"
+- 4. You will see by default have a titled "Nagad payment gateway server public key" download it or copy and use it as your env "NAGAD_PUBLIC_KEY"
+- 5.  Then below you will see "Generate key (**only for download)" then click on "Key Generate" buttion
+- 6. after click it will generate 2 keys *_pri.pem and *_pub.pem download it and keep safe please because envey time it generate new
+- 7. *_pri.pem generate key use for your env "NAGAD_PRIVATE_KEY"
+- 8. then got to "Marcent Integration" menu  select integration type E-Commerch form drop down
+- 9. give you callback URL domain_name/nagad/callback [if your callback url is other then use your own callback url]
+- 10. upload your downloaded *_pub.pem (it is after generate button clicked public key not default showing public key default showing public key you already use your env file on step 4 it is very important don't mitch match it)
+- 11. then submit after submit you see the callbackurl and pub key
+- 12. okk your job is done
+- "NAGAD_MERCHANT_NUMBER" is your provide merchant number must be use it in env
+
+- NB: live mode is not work in local. project must be upload in server. if your server is out of bd like us, singapur etc server. You need to contact with nagad and you need to provide them your server IP and your callback URL then they whitelisted your IP and callback function from their end. after that your payment gateway will be working.
+
+- Thank you have a good day.
+
 
 Contributions to the Nagad Payment Gateway package are welcome. Please note the following guidelines before submitting your pull
 request.
