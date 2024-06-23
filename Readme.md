@@ -114,9 +114,18 @@ public function pay()
     //otherwise don't do anything
     //config(['nagad.callback_url' => env('NAGAD_CALLBACK_URL')]);
     
-    $response = NagadPayment::create($amount, $trx_id); // 1st parameter is amount and 2nd is unique invoice number
+    // if you have additional information you can use below block, all fields are optional
+    $additionalMerchantInfo = [
+        'serviceName' => 'T Shirt',
+        'serviceLogoURL' => 'https://w7.pngwing.com/pngs/941/692/png-transparent-black-small-apple-logo-logo-material-apple-logo-black-thumbnail.png', // must be valid public URL
+        'additionalFieldNameEN' => 'Color',
+        'additionalFieldNameBN' => 'রং',
+        'additionalFieldValue' => 'White' // must be in English
+    ];
 
-    //$response = NagadPayment::create($amount, $trx_id,1); // additional last parameter for manage difference account
+    $response = NagadPayment::create($amount, $trx_id, 0, $additionalMerchantInfo); // 1st parameter is amount and 2nd is unique invoice number
+
+    //$response = NagadPayment::create($amount, $trx_id, 1, $additionalMerchantInfo); // additional last parameter for manage difference account
 
     if (isset($response) && $response->status == "Success"){
         return redirect()->away($response->callBackUrl);
