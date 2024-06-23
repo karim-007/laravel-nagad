@@ -52,7 +52,7 @@ class Payment extends BaseApi
      * @throws InvalidPublicKey
      * @throws NagadException
      */
-    public function create($amount, $invoice, $account=1)
+    public function create($amount, $invoice, $account=1, $additionalMerchantInfo = null)
     {
         if ($account == 1) $account=null;
         else $account="_$account";
@@ -74,6 +74,7 @@ class Payment extends BaseApi
                     'sensitiveData'       => $this->encryptWithPublicKey(json_encode($sensitiveOrderData),$account),
                     'signature'           => $this->signatureGenerate(json_encode($sensitiveOrderData),$account),
                     'merchantCallbackURL' => config("nagad.callback_url$account"),
+                    'additionalMerchantInfo' => $additionalMerchantInfo
                 ]);
             $response = json_decode($response->body());
             if (isset($response->reason)) {
